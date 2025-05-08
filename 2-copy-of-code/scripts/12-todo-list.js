@@ -1,10 +1,4 @@
-const todoList = [{
-  name: 'make dinner',
-  dueDate: '2022-12-22'
-}, {
-  name: 'wash dishes',
-  dueDate: '2022-12-22'
-}];
+const todoList = JSON.parse(localStorage.getItem('todoList')) || []; // charge la liste des tâches depuis localStorage ou initialise un tableau vide si aucune donnée n'est trouvée.
 
 renderTodoList();
 
@@ -21,6 +15,8 @@ function renderTodoList() {
     todoListHTML += html;
   });
 
+  
+
   document.querySelector('.js-todo-list')
     .innerHTML = todoListHTML;
 
@@ -28,6 +24,7 @@ function renderTodoList() {
     .forEach((deleteButton, index) => {
       deleteButton.addEventListener('click', () => {
         todoList.splice(index, 1);
+        saveTodoList();
         renderTodoList();
       });
     });
@@ -45,14 +42,27 @@ function addTodo() {
   const dateInputElement = document.querySelector('.js-due-date-input');
   const dueDate = dateInputElement.value;
 
-  todoList.push({
-    //name: name,
-    //dueDate: dueDate,
-    name,
-    dueDate
-  });
+  if (name === '') {
+    alert('Please fill up Your name');
+    return; // Arrête l'exécution si le champ est vide
+  }
+
+  if (dueDate === '') {
+    alert('Please fill up The date');
+    return; // Arrête l'exécution si le champ est vide
+  }
+
+  todoList.push({ name, dueDate });
+
+  saveTodoList();
 
   inputElement.value = '';
+  dateInputElement.value = '';
 
   renderTodoList();
 }
+
+function saveTodoList() {
+  localStorage.setItem('todoList', JSON.stringify(todoList)); // vous verez que cette fonction est juste definie en bas car elle a deja ete appeler a plusieurs reprise en haut, la raison est que En JavaScript, les fonctions déclarées avec le mot-clé function sont hoistées (levées). Cela signifie que leur définition est déplacée en haut de leur portée (scope) par le moteur JavaScript, avant l'exécution du code. Ainsi, vous pouvez appeler une fonction définie avec function même avant sa déclaration dans le fichier.
+}
+
